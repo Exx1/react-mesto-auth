@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -9,6 +10,8 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import Login from './Login';
+import Register from './Register';
 
 function App() {
 
@@ -17,7 +20,8 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setIsSelectedCard] = React.useState({ isOpen: false, src: "" });
   const [currentUser, setCurrentUser] = React.useState({});
-  const [cards, setCards] = React.useState([])
+  const [cards, setCards] = React.useState([]);
+  const [loggedIn, setLoggedIn] = React.useState(false);
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -69,12 +73,12 @@ function App() {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
 
     api.changeLikeCardStatus(card._id, !isLiked)
-    .then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   function handleCardDelete(card) {
@@ -101,10 +105,10 @@ function App() {
       })
   }
 
-  function handleUpdateAvatar({avatar}) {
+  function handleUpdateAvatar({ avatar }) {
     api.setAvatar(avatar)
       .then(() => {
-        setCurrentUser({...currentUser, avatar: avatar});
+        setCurrentUser({ ...currentUser, avatar: avatar });
         closeAllPopups();
       })
       .catch((err) => {
@@ -114,13 +118,13 @@ function App() {
 
   function handleAddPlaceSubmit(title, link) {
     api.setNewCard(title, link)
-    .then((res) => {
-      setCards([res, ...cards]);
-      closeAllPopups();
-    })
-    .catch((err) => {
-      console.log(err);
-    })
+      .then((res) => {
+        setCards([res, ...cards]);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
 
   return (
@@ -128,18 +132,22 @@ function App() {
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <Header />
-        <Main onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} />
+        <Routes>
+          <Route path="/" element={loggedIn ? <Main onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} /> : <Navigate to="/sign-in"/>}/>
+          <Route path="/sign-in" element={<Login />}/>
+          <Route path="/sign-up" element={<Register />}/>
+        </Routes>
         <Footer />
 
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit}/>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
         <PopupWithForm name="delete-card" title="Вы уверены?" buttonText="Да"></PopupWithForm>
 
-        <ImagePopup card={selectedCard.src} onClose={closeAllPopups} isOpen={selectedCard.isOpen} name={selectedCard.name}/>
+        <ImagePopup card={selectedCard.src} onClose={closeAllPopups} isOpen={selectedCard.isOpen} name={selectedCard.name} />
       </CurrentUserContext.Provider>
     </div>
 

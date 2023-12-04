@@ -40,6 +40,16 @@
 @import url(./blocks/element/__like/_active/element__like_active.css);
 @import url(./blocks/element/__trash/element__trash.css);
 
+/* auth */
+@import url(./blocks/auth/auth.css);
+@import url(./blocks/auth/__input/auth__input.css);
+@import url(./blocks/auth/__header/auth__header.css);
+@import url(./blocks/auth/__form/auth__form.css);
+@import url(./blocks/auth/__button/auth__button.css);
+@import url(./blocks/auth/__input-error/auth__input-error.css);
+@import url(./blocks/auth/__sign-up/auth__sign-up.css);
+
+
 /* footer */
 @import url(./blocks/footer/footer.css);
 @import url(./blocks/footer/__text/footer__text.css);
