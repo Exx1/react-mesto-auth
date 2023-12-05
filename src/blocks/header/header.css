@@ -4,6 +4,7 @@
   position: relative;
   max-width: 880px;
   width: 100%;
+  justify-content: space-between;
 }
 
 .header::after {

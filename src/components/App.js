@@ -12,6 +12,8 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import Login from './Login';
 import Register from './Register';
+import ProtectedRouteElement from './ProtectedRoute';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
 
@@ -19,9 +21,12 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setIsSelectedCard] = React.useState({ isOpen: false, src: "" });
+  const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [headerContent, setHeaderContent] = React.useState({text: '', link: '', email: ''})
+  const [isRegister, setIsRegister] = React.useState(false);
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -62,11 +67,16 @@ function App() {
     setIsSelectedCard({ isOpen: true, src: link, name: name });
   }
 
+  function handleRegisterClick() {
+    setIsRegisterPopupOpen(true);
+  }
+
   function closeAllPopups() {
     setIsAddPlacePopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsSelectedCard({ isOpen: false, src: "", name: "" });
+    setIsRegisterPopupOpen(false);
   }
 
   function handleCardLike(card) {
@@ -131,11 +141,11 @@ function App() {
 
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
+        <Header headerContent={headerContent}/>
         <Routes>
-          <Route path="/" element={loggedIn ? <Main onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} /> : <Navigate to="/sign-in"/>}/>
-          <Route path="/sign-in" element={<Login />}/>
-          <Route path="/sign-up" element={<Register />}/>
+          <Route path="/" element={<ProtectedRouteElement element={<Main onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} />} loggedIn={loggedIn} />}/>
+          <Route path="/sign-in" element={<Login setHeaderContent={setHeaderContent} />}/>
+          <Route path="/sign-up" element={<Register setHeaderContent={setHeaderContent}/>}/>
         </Routes>
         <Footer />
 
@@ -148,6 +158,8 @@ function App() {
         <PopupWithForm name="delete-card" title="Вы уверены?" buttonText="Да"></PopupWithForm>
 
         <ImagePopup card={selectedCard.src} onClose={closeAllPopups} isOpen={selectedCard.isOpen} name={selectedCard.name} />
+
+        <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups} isRegister={isRegister} />
       </CurrentUserContext.Provider>
     </div>
 

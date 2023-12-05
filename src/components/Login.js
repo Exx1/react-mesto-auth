@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Login(props) {
 
@@ -13,8 +14,11 @@ function Login(props) {
         setPassword(e.target.value)
     }
 
-    return (
+    React.useEffect(() => {
+        props.setHeaderContent({text: "Регистрация", link: "/sign-up", email: ""})
+    }, [])
 
+    return (
             <div className="auth">
                 <h3 className="auth__header">Вход</h3>
                 <form className="auth__form" name="auth__form_sign-in" noValidate>
@@ -26,7 +30,6 @@ function Login(props) {
                     <span className="auth__input-error status-input-error"></span>
                     <button className="auth__button" type="submit">Войти</button>
                 </form>
-
             </div>
     )
 
