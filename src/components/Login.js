@@ -1,10 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import * as Auth from './Auth';
 
 function Login(props) {
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const navigate = useNavigate();
 
     function handleChangeEmail(e) {
         setEmail(e.target.value)
@@ -18,10 +20,27 @@ function Login(props) {
         props.setHeaderContent({text: "Регистрация", link: "/sign-up", email: ""})
     }, [])
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!email || !password){
+          return;
+        }
+        Auth.authorize(password, email)
+          .then((data) => {
+            if (data.token){
+              setEmail('');
+              setPassword('');
+              props.setLoggedIn(true);
+              navigate('/', {replace: true});
+            }
+          })
+          .catch(err => console.log(err));
+      } 
+
     return (
             <div className="auth">
                 <h3 className="auth__header">Вход</h3>
-                <form className="auth__form" name="auth__form_sign-in" noValidate>
+                <form className="auth__form" name="auth__form_sign-in" onSubmit={handleSubmit} noValidate>
                     <input id="email-input" className="auth__input" value={email || ''} onChange={handleChangeEmail} placeholder="Email" type="email"
                         name="sign-in-email" required />
                     <span className="auth__input-error name-input-error"></span>

@@ -24,7 +24,9 @@ function Register(props) {
     const handleSubmit = (e) => {
         e.preventDefault()
         Auth.register(password, email)
-        .then((res) => console.log(res))
+        .then((res) => {
+            navigate('/sign-in', {replace: true});
+            })
     } 
 
 return(

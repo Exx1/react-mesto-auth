@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -14,6 +14,7 @@ import Login from './Login';
 import Register from './Register';
 import ProtectedRouteElement from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
+import * as Auth from './Auth';
 
 function App() {
 
@@ -27,6 +28,26 @@ function App() {
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [headerContent, setHeaderContent] = React.useState({text: '', link: '', email: ''})
   const [isRegister, setIsRegister] = React.useState(false);
+  const navigate = useNavigate(); 
+
+  React.useEffect(() => {
+  tokenCheck();
+  }, [])
+
+  function tokenCheck() {
+
+      const jwt = localStorage.getItem('jwt');
+    if (jwt){
+
+        Auth.getContent(jwt).then((res) => {
+          if (res){
+            setHeaderContent({text: "Выйти", link: "", email: `${res.data.email}`})
+            setLoggedIn(true);
+            navigate("/", {replace: true})
+          }
+        });
+    }
+  } 
 
   React.useEffect(() => {
     api.getInitialCards()
@@ -137,14 +158,19 @@ function App() {
       })
   }
 
+    function signOut(){
+      localStorage.removeItem('jwt');
+      navigate("/sign-in", {replace: true})
+    }
+
   return (
 
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header headerContent={headerContent}/>
+        <Header headerContent={headerContent} loggedIn={loggedIn} signOut={signOut}/>
         <Routes>
-          <Route path="/" element={<ProtectedRouteElement element={<Main onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} />} loggedIn={loggedIn} />}/>
-          <Route path="/sign-in" element={<Login setHeaderContent={setHeaderContent} />}/>
+          <Route path="/" element={<ProtectedRouteElement element={Main} onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} loggedIn={loggedIn}/>}/>
+          <Route path="/sign-in" element={<Login setHeaderContent={setHeaderContent} setLoggedIn={setLoggedIn}/>}/>
           <Route path="/sign-up" element={<Register setHeaderContent={setHeaderContent}/>}/>
         </Routes>
         <Footer />

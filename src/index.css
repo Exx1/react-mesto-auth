@@ -12,6 +12,7 @@
 @import url(./blocks/header/__logo/header__logo.css);
 @import url(./blocks/header/__email/header__email.css);
 @import url(./blocks/header/__text/header__text.css);
+@import url(./blocks/header/__text/_logged-in.css/header__text_logged-in.css);
 
 /* main */
 @import url(./blocks/main/main.css);
