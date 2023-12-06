@@ -22,12 +22,12 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
   const [selectedCard, setIsSelectedCard] = React.useState({ isOpen: false, src: "" });
-  const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [headerContent, setHeaderContent] = React.useState({text: '', link: '', email: ''})
   const [isRegister, setIsRegister] = React.useState(false);
+  const [isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
   const navigate = useNavigate(); 
 
   React.useEffect(() => {
@@ -86,10 +86,6 @@ function App() {
 
   function handleCardClick(link, name) {
     setIsSelectedCard({ isOpen: true, src: link, name: name });
-  }
-
-  function handleRegisterClick() {
-    setIsRegisterPopupOpen(true);
   }
 
   function closeAllPopups() {
@@ -158,9 +154,15 @@ function App() {
       })
   }
 
-    function signOut(){
+    function signOut() {
       localStorage.removeItem('jwt');
-      navigate("/sign-in", {replace: true})
+      setLoggedIn(false)
+      navigate("/", {replace: true})
+    }
+
+    function postRegister() {
+      closeAllPopups();
+      navigate('/sign-in', {replace: true});
     }
 
   return (
@@ -171,7 +173,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ProtectedRouteElement element={Main} onCardDelete={handleCardDelete} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} onCardLike={handleCardLike} cards={cards} loggedIn={loggedIn}/>}/>
           <Route path="/sign-in" element={<Login setHeaderContent={setHeaderContent} setLoggedIn={setLoggedIn}/>}/>
-          <Route path="/sign-up" element={<Register setHeaderContent={setHeaderContent}/>}/>
+          <Route path="/sign-up" element={<Register setHeaderContent={setHeaderContent} setIsRegister={setIsRegister} setIsRegisterPopupOpen={setIsRegisterPopupOpen}/>}/>
         </Routes>
         <Footer />
 
@@ -185,7 +187,7 @@ function App() {
 
         <ImagePopup card={selectedCard.src} onClose={closeAllPopups} isOpen={selectedCard.isOpen} name={selectedCard.name} />
 
-        <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups} isRegister={isRegister} />
+        <InfoTooltip isOpen={isRegisterPopupOpen} onClose={closeAllPopups} postRegister={postRegister} isRegister={isRegister} />
       </CurrentUserContext.Provider>
     </div>
 

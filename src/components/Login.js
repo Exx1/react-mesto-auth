@@ -30,6 +30,7 @@ function Login(props) {
             if (data.token){
               setEmail('');
               setPassword('');
+              props.setHeaderContent({text: "Выйти", link: "", email: email})
               props.setLoggedIn(true);
               navigate('/', {replace: true});
             }
