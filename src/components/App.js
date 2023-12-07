@@ -14,7 +14,7 @@ import Login from './Login';
 import Register from './Register';
 import ProtectedRouteElement from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
-import * as Auth from './Auth';
+import * as Auth from '../utils/Auth';
 
 function App() {
 
@@ -45,7 +45,10 @@ function App() {
             setLoggedIn(true);
             navigate("/", {replace: true})
           }
-        });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
     }
   } 
 

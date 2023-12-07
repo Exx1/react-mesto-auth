@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-import * as Auth from './Auth';
+import * as Auth from '../utils/Auth';
 
 function Login(props) {
 
@@ -35,7 +35,9 @@ function Login(props) {
               navigate('/', {replace: true});
             }
           })
-          .catch(err => console.log(err));
+          .catch((err) => {
+            console.log(err);
+          })
       } 
 
     return (

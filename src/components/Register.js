@@ -1,13 +1,11 @@
 import React from "react";
-import { Link, useNavigate } from 'react-router-dom';
-import * as Auth from './Auth';
+import { Link } from 'react-router-dom';
+import * as Auth from '../utils/Auth';
 
 function Register(props) {
 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-
-    const navigate = useNavigate();
 
     function handleChangeEmail(e) {
         setEmail(e.target.value)
@@ -23,9 +21,16 @@ function Register(props) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        Auth.register(password, email, props.setIsRegister, props.setIsRegisterPopupOpen)
-            .then((res) => {
-                /*navigate('/sign-in', {replace: true});*/
+        Auth.register(password, email)
+            .then(() => {
+                props.setIsRegister(true);
+                props.setIsRegisterPopupOpen(true);
+            })
+
+            .catch((err) => {
+                props.setIsRegister(false);
+                props.setIsRegisterPopupOpen(true);
+                console.log(err);
             })
     }
 
