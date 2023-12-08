@@ -9,13 +9,7 @@ export const register = (password, email) => {
         },
         body: JSON.stringify({ password, email })
     })
-        .then((res) => {
-            if (res.ok) {
-                return res.json();
-            }
-            
-            return Promise.reject(`Ошибка: ${res.status}`)
-        })
+    .then((res) => checkResponse(res))
         .then((res) => {
             return res;
         })
@@ -29,13 +23,7 @@ export const register = (password, email) => {
             },
             body: JSON.stringify({ password, email })
         })
-            .then((res) => {
-                if (res.ok) {
-                    return res.json();
-                  }
-              
-                  return Promise.reject(`Ошибка: ${res.status}`)
-            })
+        .then((res) => checkResponse(res))
             .then((data) => {
                 if (data.token) {
                     localStorage.setItem('jwt', data.token);
@@ -52,12 +40,14 @@ export const register = (password, email) => {
                 "Authorization": `Bearer ${token}`
             }
         })
-            .then((res) => {
-                if (res.ok) {
-                    return res.json();
-                  }
-              
-                  return Promise.reject(`Ошибка: ${res.status}`)
-            })
+            .then((res) => checkResponse(res))
             .then(data => data)
     } 
+
+    function checkResponse(res) {
+        if (res.ok) {
+          return res.json();
+        }
+    
+        return Promise.reject(`Ошибка: ${res.status}`)
+      }
